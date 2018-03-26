@@ -1,0 +1,9 @@
+
+hyperspyExtra.egg-info/PKG-INFO
+hyperspyExtra.egg-info/dependency_links.txt
+hyperspyExtra.egg-info/requires.txt
+hyperspyExtra.egg-info/SOURCES.txt
+hyperspyExtra.egg-info/top_level.txt
+hyperspyExtra/__pycache__/__init__.cpython-36.pyc
+hyperspyExtra/__pycache__/ROI_line.cpython-36.pyc
+hyperspyExtra/__pycache__/spikeremoval.cpython-36.pyc
