@@ -9,61 +9,55 @@ from matplotlib.colors import LogNorm
 
 import numpy as np
 
-def plot_2axis(plots=None, colors=None, axis_labels=None , x_label='x [nm]', legend=None):#TODO: Try to make like image_logScale with ax, so that plot_2axis_grid is replaced
-    fig = plt.figure()
-    ax1 = fig.add_subplot(111)
+def abc(axs, pos=[-.2, 1], end=')', title=False, **kwargs):
+    alpha = 'abcdefghijklmnopqrstuvwxyz'
+    axs = axs.flatten()
+    for i, ax in enumerate(axs):
+        label = alpha[i]+end
+        if title:
+            ax.set_title(label, **kwargs)
+        else:
+            ax.text(pos[0], pos[1], label, transform=ax.transAxes,
+                    fontweight='bold', va='top', ha='right', **kwargs)
+
+def plot_2axis(plots, fig=None, ax=None, colors=None, axis_labels=None , x_label='x [nm]', legend=None, tight_layout=True):#TODO: Try to make like image_logScale with ax, so that plot_2axis_grid is replaced
+    if fig is None:
+        fig = plt.figure()
+    if ax is None:
+        ax = fig.add_subplot(111)
+    
     for i, signal in enumerate(plots[:-1]):
-        ax1.plot(signal.axes_manager[0].axis, signal, color=colors[i],
+        ax.plot(signal.axes_manager[0].axis, signal, color=colors[i],
                  label=signal.metadata.General.title)
     
-    ax2 = ax1.twinx()
-    ax2.plot(plots[-1].axes_manager[0].axis, plots[-1], color=colors[-1],
+    axR = ax.twinx()
+    axR.plot(plots[-1].axes_manager[0].axis, plots[-1], color=colors[-1],
                  label=plots[-1].metadata.General.title)
     
     if axis_labels is not None:
-        ax1.set_ylabel(axis_labels[0])
-        ax2.set_ylabel(axis_labels[-1])
+        ax.set_ylabel(axis_labels[0])
+        axR.set_ylabel(axis_labels[-1])
     
-    lines1, labels1 = ax1.get_legend_handles_labels()
-    lines2, labels2 = ax2.get_legend_handles_labels()
-    if legend is not None:
-        ax2.legend(lines1 + lines2,  legend, loc=0)
-    else:
-        ax2.legend(lines1 + lines2,  labels1+ labels2, loc=0)
+    lines1, labels1 = ax.get_legend_handles_labels()
+    lines2, labels2 = axR.get_legend_handles_labels()
+    if legend=='auto':
+        axR.legend(lines1 + lines2,  labels1+ labels2, loc=0)
+    elif legend is not None:
+        axR.legend(lines1 + lines2,  legend, loc=0)
     
-    ax1.set_xlabel(x_label)
+    ax.set_xlabel(x_label)
     
-    plt.tight_layout()
-    return fig
+    if tight_layout:
+        plt.tight_layout()
+    
+    if fig is None and ax is None:
+        return fig, [ax, axR]
 
-def plot_2axis_grid(plots, nrows, ncols, colors=None, axis_labels=None , x_label='x [nm]', legend=None):#TODO: Try to make like image_logScale with ax
-    fig, ax1= plt.subplots(nrows=nrows, ncols=ncols)
-    ax2 = []
-    
-    for i, ax in enumerate(ax1.flatten()):
-        signal = plots[0][i]
-        ax.plot(signal.axes_manager[0].axis, signal, color=colors[0],
-                 label=signal.metadata.General.title)
-    
-        ax2.append(ax.twinx())
-        ax2[i].plot(plots[-1][i].axes_manager[0].axis, plots[-1][i], color=colors[-1],
-                     label=plots[-1][i].metadata.General.title)
-        
-        if axis_labels is not None:
-            ax.set_ylabel(axis_labels[0][i])
-            ax2[i].set_ylabel(axis_labels[-1][i])
-        
-        lines1, labels1 = ax.get_legend_handles_labels()
-        lines2, labels2 = ax2[i].get_legend_handles_labels()
-        if legend is not None:
-            legend = np.array(legend)
-            ax2[i].legend(lines1 + lines2,  legend.T[i], loc='upper right')
-        elif legend=='auto':
-            ax2[i].legend(lines1 + lines2,  labels1 + labels2, loc='upper right')
-        
-        ax.set_xlabel(x_label)
-    
-    plt.tight_layout()
+def plot_2axis_grid(plots, fig, axs, tight_layout=True, **kwargs):#TODO: Try to make like image_logScale with ax
+    for i, ax in enumerate(axs.flatten()):
+        plot_2axis([VP_max_E[i], HAADF[i]], fig=fig, ax=ax, **kwargs)
+    if tight_layout:
+        plt.tight_layout()
     return fig
     
 def image_logScale(s, vmin=1, ax=None, **kwargs):

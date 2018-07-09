@@ -6,7 +6,7 @@ Created on Sun May 27 18:09:25 2018
 """
 import numpy as np
 
-def bragg_reflection(hkl, lattice, units_out='A'):
+def bragg_reflection(hkl, lattice, units_out='A', printout=True):
     if isinstance(hkl, int):
         N = hkl
     elif isinstance(hkl, list) and lne(hkl)==3:
@@ -18,11 +18,15 @@ def bragg_reflection(hkl, lattice, units_out='A'):
         d = lattice/np.sqrt(N)
     elif units_out=='nm':
         d = lattice/np.sqrt(N)/10
-    print('d: ',d,units_out)
     
     q = 2*np.pi/d
-    print('q: ',q,units_out,'-')
+    if printout:
+        print('d: ',d,units_out)
+        print('q: ',q,units_out,'-')
     return q
+
+def q_to_theta(q, wave_length=0.0197):
+	return wave_length*q/2
     
 if __name__ == "__main__":
     print(len([0,1,2]))
